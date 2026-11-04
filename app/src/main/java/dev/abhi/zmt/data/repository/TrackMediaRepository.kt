@@ -21,6 +21,7 @@ import androidx.media3.common.util.MediaFormatUtil
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.decoder.ffmpeg.FfmpegLibrary
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.abhi.zmt.data.remote.telegram.TelegramClient
 import dev.abhi.zmt.domain.model.Spec
 import dev.abhi.zmt.domain.model.Track
 import dev.abhi.zmt.domain.model.TrackSource
@@ -33,6 +34,7 @@ import dev.abhi.zmt.util.probeFrames
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.runBlocking
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,6 +45,7 @@ private const val VBR_PROBE_FRAMES = 400
 @Singleton
 class TrackMediaRepository @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    private val telegramClient: TelegramClient,
 ) {
 
     fun loadArt(uri: Uri, fileUri: Uri? = null): Bitmap? =
@@ -50,6 +53,8 @@ class TrackMediaRepository @Inject constructor(
             runCatching {
                 BitmapFactory.decodeStream(URL(upgradeArtUrl(uri.toString())).openStream())
             }.getOrNull()
+        } else if (uri.scheme == "tg") {
+            loadTelegramThumbnail(uri)
         } else {
             fileUri?.let(::loadEmbeddedArt) ?: runCatching {
                 // Prefer the full-length media (e.g. for local files) which yields
@@ -64,6 +69,19 @@ class TrackMediaRepository @Inject constructor(
                 context.contentResolver.openInputStream(uri).use(BitmapFactory::decodeStream)
             }.getOrNull()
         }
+
+    /**
+     * Telegram covers use the address tg://thumbnail/<fileId>. The small
+     * thumbnail is downloaded through TDLib (it is only a few KB) and decoded
+     * from the local file TDLib saved it to.
+     */
+    private fun loadTelegramThumbnail(uri: Uri): Bitmap? = runCatching {
+        if (uri.authority != "thumbnail") return@runCatching null
+        val fileId = uri.lastPathSegment?.toLongOrNull() ?: return@runCatching null
+        val file = runBlocking { telegramClient.downloadFile(fileId) }
+        val path = file.local.path
+        if (path.isNullOrEmpty()) null else BitmapFactory.decodeFile(path)
+    }.getOrNull()
 
     private fun loadEmbeddedArt(fileUri: Uri): Bitmap? = runCatching {
         MediaMetadataRetriever().use { retriever ->
