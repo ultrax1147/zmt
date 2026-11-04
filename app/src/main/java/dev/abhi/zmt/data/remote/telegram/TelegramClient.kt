@@ -347,6 +347,13 @@ class TelegramClient @Inject constructor() {
     suspend fun downloadFile(fileId: Long): TdApi.File =
         sendRequest(TdApi.DownloadFile(fileId.toInt(), 1, 0, 0, true))
 
+    /**
+     * Starts a download in the background and returns immediately, so the
+     * player can start reading the first bytes while the rest still arrives.
+     */
+    suspend fun startStreamingDownload(fileId: Long, offset: Long = 0L): TdApi.File =
+        sendRequest(TdApi.DownloadFile(fileId.toInt(), 32, offset, 0L, false))
+
     suspend fun getFile(fileId: Long): TdApi.File =
         sendRequest(TdApi.GetFile(fileId.toInt()))
 
