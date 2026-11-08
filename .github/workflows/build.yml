@@ -43,6 +43,6 @@ jobs:
       - name: upload debug apk
         uses: actions/upload-artifact@v7
         with:
-          name: usfx-debug
+          name: X44
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 7
