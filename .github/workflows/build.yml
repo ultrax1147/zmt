@@ -40,9 +40,12 @@ jobs:
       - name: build debug apk
         run: ./gradlew assembleDebug --no-configuration-cache
 
-      - name: upload debug apk
+      - name: rename apk
+        run: mv app/build/outputs/apk/debug/*.apk X44.apk
+
+      - name: upload apk
         uses: actions/upload-artifact@v7
         with:
-          name: X44
-          path: app/build/outputs/apk/debug/*.apk
-          retention-days: 7
+          path: X44.apk
+          archive: false
+          retention-days: 30
