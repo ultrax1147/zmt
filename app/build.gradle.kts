@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.chaquo)
 }
 
-val appVersionName = (project.findProperty("versionOverride") as String?) ?: "1.0"
+val appVersionName = (project.findProperty("versionOverride") as String?) ?: "1"
 val appVersionCode =
     appVersionName
         .substringBefore("-")
