@@ -44,7 +44,7 @@ val telegramApiHash: String =
         ?: ""
 
 base {
-    archivesName.set("zmt-$appVersionName")
+    archivesName.set("X44-$appVersionName")
 }
 
 android {
