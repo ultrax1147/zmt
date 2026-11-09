@@ -15,7 +15,7 @@ val TuiBright = Color(0xFFDFE4E5)
 val TuiDim = Color(0xFF767D80)
 val TuiFaint = Color(0xFF3C4245)
 val TuiLine = Color(0xFF1E2122)
-var TuiAccent by mutableStateOf(Color(0xFFDC143C))
+var TuiAccent by mutableStateOf(Color(0xFF4FC3F7))
 val TuiRed = Color(0xFFB85C50)
 val TuiGreen = Color(0xFF7FA05F)
 
@@ -27,7 +27,7 @@ val TuiSuccess = Color(0xFF5E9E6E)     // success state
 val TuiWarning = Color(0xFFB89650)     // warning state
 val TuiTextPrimary = Color(0xFFE8E9EB) // primary text (brighter than TuiFg)
 val TuiTextSecondary = Color(0xFF9CA0A3)// secondary text
-val TuiGlow = Color(0xFFDC143C)        // ambient glow (matches default accent)
+val TuiGlow = Color(0xFF4FC3F7)        // ambient glow (matches default accent)
 
 
 fun AccentColor.toColor(): Color = Color(argb)
