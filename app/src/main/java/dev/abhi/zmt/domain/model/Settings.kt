@@ -43,6 +43,7 @@ enum class ThemeOption(val label: String) {
 }
 
 enum class AccentColor(val argb: Long, val label: String) {
+    SKYBLUE(0xFF4FC3F7, "sky blue"),
     CRIMSON(0xFFDC143C, "crimson"),
     AMBER(0xFFE8A33D, "amber"),
     STEEL(0xFF7A9BB3, "steel"),
@@ -51,7 +52,7 @@ enum class AccentColor(val argb: Long, val label: String) {
     TEAL(0xFF74AB9E, "teal"),
     LAVENDER(0xFF9389C4, "lavender"),
     CLAY(0xFFC08575, "clay"),
-    SKY(0xFF80A6C4, "sky"),
+    DUSTYBLUE(0xFF80A6C4, "dustyblue"),
     ROSE(0xFFBD84A0, "rose"),
     SAGE(0xFF8AB194, "sage"),
     PERIWINKLE(0xFF8C96C0, "periwinkle"),
@@ -89,7 +90,7 @@ data class DmtSettings(
     val romanizedLyrics: Boolean = false,
     val rawArt: Boolean = false,
     val theme: ThemeOption = ThemeOption.AMOLED_BLACK,
-    val accent: AccentColor = AccentColor.CRIMSON,
+    val accent: AccentColor = AccentColor.SKYBLUE,
     val stopOnDismiss: Boolean = false,
     val setupDone: Boolean = false,
     val blockedFolders: Set<String> = emptySet(),
