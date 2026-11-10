@@ -39,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -241,6 +242,50 @@ fun TuiKey(
                 vertical = if (big) 15.dp else 11.dp,
             ),
     )
+}
+
+/**
+ * Same look and press effect as [TuiKey], but instead of text it shows a small
+ * box filled with [color] inside the brackets: [ ■ ].
+ */
+@Composable
+fun TuiColorKey(
+    color: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val press = rememberTuiPress()
+    val textColor = lerp(TuiFg, TuiBg, press.fraction)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .border(1.dp, lerp(TuiLine, TuiFg, press.fraction))
+            .background(lerp(TuiRaised, TuiFg, press.fraction))
+            .clickable(
+                interactionSource = press.interactionSource,
+                indication = null,
+            ) {
+                press.click(onClick)
+            }
+            .padding(horizontal = 14.dp, vertical = 11.dp),
+    ) {
+        Text(
+            text = "[ ",
+            style = MaterialTheme.typography.labelLarge,
+            color = textColor,
+        )
+        Box(
+            modifier = Modifier
+                .size(16.dp)
+                .background(color)
+                .border(1.dp, TuiLine),
+        )
+        Text(
+            text = " ]",
+            style = MaterialTheme.typography.labelLarge,
+            color = textColor,
+        )
+    }
 }
 
 @Composable
