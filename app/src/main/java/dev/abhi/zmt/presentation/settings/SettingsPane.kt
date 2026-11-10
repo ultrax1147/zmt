@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.abhi.zmt.BuildConfig
 import dev.abhi.zmt.R
@@ -46,6 +48,7 @@ import dev.abhi.zmt.ui.theme.TuiDim
 import dev.abhi.zmt.ui.theme.TuiFaint
 import dev.abhi.zmt.ui.theme.TuiFg
 import dev.abhi.zmt.ui.theme.TuiLine
+import dev.abhi.zmt.ui.theme.TuiTextPrimary
 import dev.abhi.zmt.ui.theme.toColor
 
 private val COVER_COLS_STEPS = listOf(48, 64, 80, 96)
@@ -250,7 +253,8 @@ fun SettingsPane(state: DmtState, dispatch: (DmtAction) -> Unit) {
             Text(
                 text = stringResource(R.string.credit),
                 style = MaterialTheme.typography.labelMedium,
-                color = TuiDim,
+                color = TuiTextPrimary,
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = " ↗",
@@ -263,7 +267,7 @@ fun SettingsPane(state: DmtState, dispatch: (DmtAction) -> Unit) {
 
 @Composable
 fun AccentRow(settings: DmtSettings, dispatch: (DmtAction) -> Unit) {
-    var preview by remember(settings.accent) { mutableStateOf(settings.accent) }
+    var expanded by remember { mutableStateOf(false) }
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -272,27 +276,62 @@ fun AccentRow(settings: DmtSettings, dispatch: (DmtAction) -> Unit) {
                 .fillMaxWidth()
                 .padding(vertical = 5.dp),
         ) {
-            Text(
-                text = stringResource(R.string.set_accent),
-                style = MaterialTheme.typography.bodyLarge,
-                color = TuiFg,
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
+            // Left side: label + current colour box. Tap it to open the colour popup.
+            Box {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .size(14.dp)
-                        .background(preview.toColor())
-                        .border(1.dp, TuiLine),
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                TuiKey(label = "[ ${preview.label} ]") { preview = preview.next() }
-                if (preview != settings.accent) {
-                    Spacer(modifier = Modifier.width(6.dp))
-                    TuiKey(label = stringResource(R.string.accent_accept)) {
-                        dispatch(DmtAction.Config(settings.copy(accent = preview)))
+                        .tuiClickable { expanded = true }
+                        .padding(vertical = 6.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.set_accent),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TuiFg,
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(22.dp)
+                            .background(settings.accent.toColor())
+                            .border(1.dp, TuiLine),
+                    )
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    AccentColor.entries.chunked(5).forEach { rowColors ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        ) {
+                            rowColors.forEach { color ->
+                                val selected = color == settings.accent
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .background(color.toColor())
+                                        .border(
+                                            if (selected) 2.dp else 1.dp,
+                                            if (selected) TuiFg else TuiLine,
+                                        )
+                                        .tuiClickable {
+                                            dispatch(DmtAction.Config(settings.copy(accent = color)))
+                                            expanded = false
+                                        },
+                                )
+                            }
+                        }
                     }
                 }
             }
+            // Right side: name of the selected colour.
+            Text(
+                text = settings.accent.label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = TuiFg,
+            )
         }
         HorizontalDivider(color = TuiLine)
     }
