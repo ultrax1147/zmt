@@ -46,17 +46,16 @@ enum class AccentColor(val argb: Long, val label: String) {
     SKYBLUE(0xFF4FC3F7, "sky blue"),
     CRIMSON(0xFFDC143C, "crimson"),
     AMBER(0xFFE8A33D, "amber"),
-    STEEL(0xFF7A9BB3, "steel"),
+    WHITE(0xFFFFFFFF, "white"),
     MOSS(0xFF98A96F, "moss"),
-    MAUVE(0xFFAF87A3, "mauve"),
-    TEAL(0xFF74AB9E, "teal"),
+    BLACK(0xFF000000, "black"),
+    PURPLE(0xFFBA68C8, "purple"),
     LAVENDER(0xFF9389C4, "lavender"),
     CLAY(0xFFC08575, "clay"),
-    DUSTYBLUE(0xFF80A6C4, "dustyblue"),
+    SKY(0xFF80A6C4, "dusty blue"),
     ROSE(0xFFBD84A0, "rose"),
     SAGE(0xFF8AB194, "sage"),
-    PERIWINKLE(0xFF8C96C0, "periwinkle"),
-    RUST(0xFFB97B62, "rust"),
+    ORANGE(0xFFFF7A1A, "orange"),
     ;
 
     fun next(): AccentColor = entries[(ordinal + 1) % entries.size]
